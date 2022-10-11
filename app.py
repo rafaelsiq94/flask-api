@@ -32,9 +32,38 @@ class Filho(db.Model):  # type: ignore
     pai = db.relationship("Pai")
 
 
+class FilhoProfessor(db.Model):  # type: ignore
+    __tablename__ = "filho_professor"
+
+    professor_id = db.Column(db.ForeignKey("professor.id", ondelete="CASCADE"))
+    filho_id = db.Column(db.ForeignKey("filho.id", ondelete="CASCADE"))
+
+
+class Professor(db.Model):  # type: ignore
+    __tablename__ = "professor"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+
+
+class PaiSchema(Schema):
+    class Meta:
+        model = Pai
+        ordered = True
+
+    id = fields.Integer(dump_only=True)
+    name = fields.String(required=True)
+    filhos = fields.Nested("FilhoSchema", many=True)
+
+    @post_load
+    def make_object(self, data, **kwargs):
+        return Pai(**data)
+
+
 class FilhoSchema(Schema):
     class Meta:
         model = Filho
+        ordered = True
 
     id = fields.Integer(dump_only=True)
     name = fields.String(required=True)
@@ -43,20 +72,6 @@ class FilhoSchema(Schema):
     @post_load
     def make_object(self, data, **kwargs):
         return Filho(**data)
-
-
-class PaiSchema(Schema):
-    filhos = fields.Nested(FilhoSchema, many=True)
-
-    class Meta:
-        model = Pai
-
-    id = fields.Integer(dump_only=True)
-    name = fields.String(required=True)
-
-    @post_load
-    def make_object(self, data, **kwargs):
-        return Pai(**data)
 
 
 @app.route("/", methods=["GET"])

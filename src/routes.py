@@ -42,8 +42,8 @@ def create_parent():
     return pai_schema.dump(pai)
 
 
-@pai.route("/<int:pai_id>/<int:filho_id>/", methods=["PUT"])
-def update_parent(pai_id, filho_id):
+@pai.route("/<int:pai_id>/", methods=["PUT"])
+def update_parent(pai_id):
     data = request.json
     filho = data.pop("filho")
     try:

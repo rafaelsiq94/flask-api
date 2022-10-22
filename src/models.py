@@ -1,20 +1,21 @@
 from src import db
 
 
-class Pai(db.Model):  # type: ignore
+class Updatable:
+    def update(self, data):
+        for attr, value in data.items():
+            setattr(self, attr, value)
+
+
+class Pai(db.Model, Updatable):
     __tablename__ = "pai"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    filhos = db.relationship("Filho")
-
-    def update(self, data):
-        for k, v in data.items():
-            setattr(self, k, v)
-        return self
+    filhos = db.relationship("Filho", overlaps="filhos")
 
 
-class Filho(db.Model):  # type: ignore
+class Filho(db.Model, Updatable):
     __tablename__ = "filho"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -24,7 +25,7 @@ class Filho(db.Model):  # type: ignore
     pai = db.relationship("Pai")
 
 
-class FilhoProfessor(db.Model):  # type: ignore
+class FilhoProfessor(db.Model):
     __tablename__ = "filho_professor"
 
     professor_id = db.Column(
@@ -34,11 +35,11 @@ class FilhoProfessor(db.Model):  # type: ignore
         db.ForeignKey("filho.id", ondelete="CASCADE"), primary_key=True
     )
 
-    professor = db.relationship("Professor")
-    filho = db.relationship("Filho")
+    professor = db.relationship("Professor", overlaps="professores")
+    filho = db.relationship("Filho", overlaps="professores")
 
 
-class Professor(db.Model):  # type: ignore
+class Professor(db.Model):
     __tablename__ = "professor"
 
     id = db.Column(db.Integer, primary_key=True)

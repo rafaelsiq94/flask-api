@@ -21,7 +21,7 @@ class FilhoSchema(Schema):
         model = Filho
         ordered = True
 
-    id = fields.Integer(dump_only=True)
+    id = fields.Integer()
     name = fields.String(required=True)
     pai_id = fields.Integer()
     professores = fields.Nested("ProfessorSchema", many=True)
@@ -36,7 +36,7 @@ class ProfessorSchema(Schema):
         model = Professor
         ordered = True
 
-    id = fields.Integer(dump_only=True)
+    id = fields.Integer()
     name = fields.String(required=True)
 
     @post_load

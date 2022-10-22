@@ -14,12 +14,10 @@ def create_app():
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    from src import models
-
     db.init_app(app)
 
-    from src.routes import api
+    from src.routes import pai
 
-    app.register_blueprint(api)
+    app.register_blueprint(pai, url_prefix="/api")
 
     return app
